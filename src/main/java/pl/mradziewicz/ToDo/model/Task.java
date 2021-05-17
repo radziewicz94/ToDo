@@ -1,6 +1,7 @@
 package pl.mradziewicz.ToDo.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "tasks")
@@ -8,8 +9,10 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @NotBlank(message = "Opis nie może być pusty")
     private String description;
     private boolean done;
+
 
     public int getId() {
         return id;
