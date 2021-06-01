@@ -13,8 +13,7 @@ public class InfoController {
 
     private TaskConfigurationProperties myProp;
 
-    @Autowired
-    InfoController(final DataSourceProperties dataSource, final TaskConfigurationProperties myProp) {
+    public InfoController(DataSourceProperties dataSource, TaskConfigurationProperties myProp) {
         this.dataSource = dataSource;
         this.myProp = myProp;
     }
@@ -26,6 +25,6 @@ public class InfoController {
 
     @GetMapping("/info/prop")
     boolean getMyProp() {
-        return myProp.isAlloMultipleTaskFromTemplate();
+        return myProp.getTemplate().isAllowMultipleTaskFromTemplate();
     }
 }
