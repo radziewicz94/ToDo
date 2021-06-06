@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import pl.mradziewicz.ToDo.model.Task;
 import pl.mradziewicz.ToDo.model.TaskRepository;
@@ -40,8 +41,12 @@ public class TaskContoller {
         if(!repository.existsById(id)){
             return ResponseEntity.notFound().build();
         }
-        toUpdate.setId(id);
-        return ResponseEntity.ok(repository.save(toUpdate));
+        logger.info("Aktualizuje");
+        repository.findById(id).ifPresent(task -> {
+            task.update(toUpdate);
+            repository.save(task);
+        });
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/tasks/{id}")
@@ -56,4 +61,15 @@ public class TaskContoller {
     ResponseEntity<Task> saveTask(@Valid @RequestBody Task saveTask){
         return ResponseEntity.ok(repository.save(saveTask));
     }
+
+    @Transactional
+    @PatchMapping("/tasks/{id}")
+    public ResponseEntity<Task> toggleTask(@PathVariable int id){
+        if(!repository.existsById(id)){
+            return ResponseEntity.notFound().build();
+        }
+        repository.findById(id).ifPresent(task -> task.setDone(!task.isDone()));
+        return ResponseEntity.noContent().build();
+    }
+
 }
