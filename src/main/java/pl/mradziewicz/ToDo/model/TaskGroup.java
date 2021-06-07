@@ -3,24 +3,49 @@ package pl.mradziewicz.ToDo.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
-@Table(name = "tasks")
-public class Task{
+public class TaskGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotBlank(message = "Opis nie może być pusty")
     private String description;
     private boolean done;
-    private LocalDateTime deadline;
     @Embedded
     private Audit audit = new Audit();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
+    private Set<Task> tasks;
     @ManyToOne
-    @JoinColumn(name = "task_groups_id")
-    private TaskGroup group;
+    @JoinColumn(name = "project_id")
+    private Project project;
 
-    public Task() {
+    public TaskGroup() {
+    }
+
+    public Audit getAudit() {
+        return audit;
+    }
+
+    public void setAudit(Audit audit) {
+        this.audit = audit;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public Set<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Set<Task> tasks) {
+        this.tasks = tasks;
     }
 
     public int getId() {
@@ -45,20 +70,6 @@ public class Task{
 
     public void setDone(boolean done) {
         this.done = done;
-    }
-
-    public LocalDateTime getDeadline() {
-        return deadline;
-    }
-
-    public void setDeadline(LocalDateTime deadline) {
-        this.deadline = deadline;
-    }
-
-    public void update(Task task){
-        description = task.description;
-        done = task.done;
-        deadline = task.deadline;
     }
 
     @Override
